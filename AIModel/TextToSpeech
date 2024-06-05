@@ -1,0 +1,32 @@
+import nemo.collections.tts as nemo_tts
+import torch
+import torchaudio
+import IPython.display as ipd
+
+# Load pre-trained models
+tacotron2 = nemo_tts.models.Tacotron2Model.from_pretrained(model_name="tts_en_tacotron2")
+waveglow = nemo_tts.models.WaveGlowModel.from_pretrained(model_name="tts_waveglow")
+
+# Define the text to be synthesized
+text = input("Please enter test: ")
+
+# Convert text to mel-spectrogram using Tacotron 2
+tacotron2.eval()  # Set Tacotron2 to evaluation mode
+waveglow.eval()   # Set WaveGlow to evaluation mode
+
+with torch.no_grad():
+    parsed = tacotron2.parse(text)
+    mel_spec = tacotron2.generate_spectrogram(tokens=parsed)
+
+# Convert mel-spectrogram to audio waveform using WaveGlow
+with torch.no_grad():
+    audio = waveglow.convert_spectrogram_to_audio(spec=mel_spec)
+
+# Save the audio to a file
+audio_file = "output.wav"
+torchaudio.save(audio_file, audio.cpu(), 22050)
+
+# Play the audio (optional)
+ipd.display(ipd.Audio(audio_file))
+
+print(f"Audio has been saved to {audio_file}")
