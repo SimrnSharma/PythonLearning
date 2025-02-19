@@ -2,14 +2,14 @@ import os
 import re
 
 # Define folder path
-folder_path = "groundSmoke"
+folder_path = "spriteGround"
 
 # Get all files in the folder
 files = sorted(os.listdir(folder_path))
 
 # Rename files
 for file_name in files:
-    match = re.match(r"GS(\d+)\.png", file_name)  # Match filenames like GS_0000.png
+    match = re.match(r"GS__(\d+)\.png", file_name)  # Match filenames like GS_0000.png
     if match:
         old_path = os.path.join(folder_path, file_name)
         
